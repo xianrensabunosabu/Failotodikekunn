@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ファイルを送信 - ファイルお届け便</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📤 ファイル送信</h1>
+  <form id="uploadForm">
+    <input type="file" name="file" required>
+    <button type="submit">アップロード</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      result.innerHTML = "アップロード中です...";
+
+      const res = await fetch('/upload', { method: 'POST', body: data });
+      const json = await res.json();
+
+      result.innerHTML = `
+        <p>このURLを相手に送ってください👇</p>
+        <a href="${json.downloadUrl}" target="_blank">${json.downloadUrl}</a>
+        <p>QRコードで受信する場合:</p>
+        <img src="${json.qr}" alt="QRコード" style="width:200px;">
+      `;
+    });
+  </script>
+</body>
+</html>
